@@ -1,0 +1,21 @@
+# rule skeleton
+#RULE <rule name>
+#CLASS <class name>
+#METHOD <method name>
+#AT 
+#BIND <bindings>
+#IF <condition>
+#DO <actions>
+#ENDRULE
+
+# rule skeleton
+RULE at entry
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AT ENTRY
+IF TRUE
+DO 
+	traceln("tryOne intercepted");
+	traceStack();
+ENDRULE
+

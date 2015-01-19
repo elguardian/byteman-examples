@@ -1,0 +1,35 @@
+# ensure the main thread is the last thread exiting the test
+# a thread waits for an arbitrary number of threads (this case two). 
+# the threads waiting are not counting (this case the main thread)
+
+
+# rule skeleton
+RULE create joiner
+CLASS com.github.elguardian.byteman.examples.threads.Data
+METHOD <init>
+IF TRUE 
+DO createJoin("identifier", 2);
+   traceln("create joiner point " + isJoin("identifier", 3));
+ENDRULE
+
+RULE wait there
+CLASS com.github.elguardian.byteman.examples.threads.Data
+METHOD setVar
+AT EXIT
+IF TRUE
+DO 
+	traceln("entering thread " + $1);
+	joinEnlist("identifier");
+	traceln("exiting thread " + $1);
+ENDRULE
+
+RULE wait there main thread !
+CLASS com.github.elguardian.byteman.examples.threads.ThreadsRaceCondition
+METHOD start
+AT LINE 12
+IF TRUE
+DO  
+    traceln("main thread waiting");
+    joinWait("identifier", 2);
+    traceln("main thread exiting");
+ENDRULE

@@ -1,0 +1,33 @@
+
+# Ensure the var has the value A  (Not true value in the signal ... this guarantees the order)
+
+RULE wait A there
+CLASS com.github.elguardian.byteman.examples.threads.Data
+METHOD setVar
+AT ENTRY
+IF $1 == "A"
+DO 
+   traceln("waiting...");
+   waitFor("block");
+   signalWake("main", true);
+ENDRULE
+
+RULE wait B there
+CLASS com.github.elguardian.byteman.examples.threads.Data
+METHOD setVar
+AT EXIT
+IF $1 == "B"
+DO 
+   signalWake("block", true);
+   traceln("releasing A");
+ENDRULE
+
+
+RULE wait  there main thread !
+CLASS com.github.elguardian.byteman.examples.threads.ThreadsRaceCondition
+METHOD start
+AT LINE 12
+IF TRUE
+DO 
+   waitFor("main");
+ENDRULE

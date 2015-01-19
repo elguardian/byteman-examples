@@ -1,0 +1,118 @@
+# different kind of rules
+#AT ENTRY
+#AT EXIT
+#AT LINE number
+#AT READ [type .] field [count | ALL ]
+#AT READ $var-or-idx [count | ALL ]
+#AFTER READ [ type .] field [count | ALL ]
+#AFTER READ $var-or-idx [count | ALL ]
+#AT WRITE [ type .] field [count | ALL ]
+#AT WRITE $var-or-idx [count | ALL ]
+#AFTER WRITE [ type .] field [count | ALL ]
+#AFTER WRITE $var-or-idx [count | ALL ]
+#AT INVOKE [ type .] method [ ( argtypes ) ] [count | ALL ]
+#AFTER INVOKE [ type .] method [ ( argtypes ) ][count | ALL ]
+#AT SYNCHRONIZE [count | ALL ]
+#AFTER SYNCHRONIZE [count | ALL ]
+#AT THROW [count | ALL ]
+
+RULE at_entry
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AT ENTRY
+IF TRUE
+DO traceln("tryOne intercepted (AT ENTRY)")
+ENDRULE
+
+# rule skeleton
+RULE at exit
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AT ENTRY
+IF TRUE
+DO traceln("tryOne intercepted (AT EXIT")
+ENDRULE
+
+RULE line_entry
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AT LINE 9
+IF TRUE
+DO traceln("tryOne intercepted (AT LINE 9)")
+ENDRULE
+
+RULE at read with count
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+# count the second time you access var
+AT READ var 2 
+IF TRUE
+DO traceln("tryOne intercepted (AT READ var)")
+ENDRULE
+
+RULE after read
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AFTER READ var
+IF TRUE
+DO traceln("tryOne intercepted (AFTER READ var)")
+ENDRULE
+
+RULE at write
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AT WRITE var
+IF TRUE
+DO traceln("tryOne intercepted (AT WRITE var)")
+ENDRULE
+
+RULE after write
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AFTER WRITE var
+IF TRUE
+DO traceln("tryOne intercepted (AFTER WRITE var)")
+ENDRULE
+
+RULE at_inoke
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AT INVOKE tryTwo (String)
+IF TRUE
+DO traceln("tryOne intercepted (AT INVOKE tryTwo)")
+ENDRULE
+
+RULE after_invoke
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryOne
+AFTER INVOKE tryTwo (String)
+IF TRUE
+DO traceln("tryOne intercepted (AFTER INVOKE tryTwo)")
+ENDRULE
+
+RULE at sync
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryThree
+#it means wich sync blocks is, only locates one, not every one of them
+AT SYNCHRONIZE 
+IF TRUE
+DO traceln("tryOne intercepted (AT SYNCHRONIZE tryThree)")
+ENDRULE
+
+RULE after sync
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryThree
+#it means wich sync blocks is, only locates one, not every one of them
+AFTER SYNCHRONIZE 
+IF TRUE
+DO traceln("tryOne intercepted (AFTER SYNCHRONIZE tryThree)")
+ENDRULE
+
+RULE at throw
+CLASS com.github.elguardian.byteman.examples.SimpleClass
+METHOD tryFour
+#detect throw statement inside the method (not when the function throws anything)
+AT THROW 
+IF TRUE
+DO traceln("tryFour intercepted (AT THROW  exception)")
+ENDRULE

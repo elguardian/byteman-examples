@@ -1,0 +1,28 @@
+# it guarantees that var has a value (cannot guarantee the order)
+
+# rule skeleton
+RULE create rendevous
+CLASS com.github.elguardian.byteman.examples.threads.Data
+METHOD <init>
+IF TRUE 
+DO createRendezvous("identifier", 3, true);
+   traceln("create rendezvous point");
+ENDRULE
+
+RULE wait there
+CLASS com.github.elguardian.byteman.examples.threads.Data
+METHOD setVar
+AT EXIT
+IF TRUE
+DO  traceln("we got 3 threads " + $this + " rendezvous " + getRendezvous("identifier", 3));
+    rendezvous("identifier");
+ENDRULE
+
+RULE wait there main thread !
+CLASS com.github.elguardian.byteman.examples.threads.ThreadsRaceCondition
+METHOD start
+AT LINE 12
+IF TRUE
+DO  traceln("main thread " + getRendezvous("identifier", 3));
+    rendezvous("identifier");
+ENDRULE

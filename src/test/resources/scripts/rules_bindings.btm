@@ -1,0 +1,32 @@
+# references to previously bound variables
+# ● references to the trigger method recipient or parameters
+# ● references to the local variables in scope at the trigger point
+# ● references to special variables $!, $^, $#, $*, $@, $CLASS and $METHOD
+# $! return value AT EXIT, AFTER INVOKE
+# $^ throwable AT THROW
+# $# number of parameters of the method
+# $* three points
+# $@ array with parameters AT INVOKE
+# ● static field references
+# ● primitive literals
+# ● field accesses
+# ● static or instance method invocations
+# ● built-in operation invocations
+
+# rule skeleton
+RULE bindings
+CLASS com.github.elguardian.byteman.examples.BindingsClass
+METHOD setBool
+AT ENTRY
+BIND bindings:com.github.elguardian.byteman.examples.BindingsClass = $this;
+	clazz:String = $CLASS;
+	method:String = $METHOD;
+	value:boolean = $1;
+	instance = $0;
+IF bindings.isBool()
+DO 
+	traceln("trace " + $this + " CLASS " + clazz +  "::" + method);
+	traceln("params " + $#);
+	traceln("array " + value);
+	traceln("this " + instance);
+ENDRULE
